@@ -1,5 +1,5 @@
 ENV_FILE=docker.env
-DB_PATH_ARG=/src/tcc_poc1.db
+DB_PATH_ARG=/src/tcc_poc2.db
 include docker.env
 export
 
@@ -24,16 +24,16 @@ get-time:
 	sudo make clean; make psql generate; time make transform;
 get-sizes:
 	echo "Size in Bytes:"
-	du -hs -B 1M emprego/data/raw
-	du -hs -B 1M emprego/data/curated
+	du -hs -B 1M evento/data/raw
+	du -hs -B 1M evento/data/curated
 
 build: # BUILDS ALL DOCKER IMAGES NEEDED FOR THE PROJECT
-	docker build -t poc1-worker:latest -f ./docker/worker.Dockerfile .
-	docker build -t poc1-duckdb:latest -f ./docker/duckdb.Dockerfile --build-arg DB_PATH_ARG=$(DB_PATH_ARG) .
+	docker build -t poc2-worker:latest -f ./docker/worker.Dockerfile .
+	docker build -t poc2-duckdb:latest -f ./docker/duckdb.Dockerfile --build-arg DB_PATH_ARG=$(DB_PATH_ARG) .
 clean: # REMOVES ALL GENERATED FILES
-	docker stop $$(docker ps -f name=poc1 -q) || true
-	docker rm -f -v $$(docker ps -f name=poc1 -q) || true
-	rm -rf emprego/db/*
+	docker stop $$(docker ps -f name=poc2 -q) || true
+	docker rm -f -v $$(docker ps -f name=poc2 -q) || true
+	rm -rf evento/db/*
 	rm -rf postgres/postgres_data
 	rm -rf $$(find . -type d -name "__pycache__" | xargs)
 	rm -rf $$(find . -type f -name "*.json" | xargs)
@@ -41,24 +41,24 @@ clean: # REMOVES ALL GENERATED FILES
 psql: # STARTS POSTGRES INSTANCE
 	docker compose --env-file $(ENV_FILE) up -d postgres
 duckdb: # STARTS DUCKDB INSTANCE AND OPENS DUCKDB CLIENT
-	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/emprego/db:/src --rm --name duckdb duckdb $(DB_PATH_ARG)
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento/db:/src --rm --name duckdb duckdb $(DB_PATH_ARG)
 debug: # STARTS A DEBUG SESSION IN WORKER (PYTHON ENVIRONMENT)
-	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/emprego:/src --rm --entrypoint /bin/bash -i -t --name debug worker
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --entrypoint /bin/bash -i -t --name debug worker
 
 
 
 generate: # GENERATES RAW DATA
-	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/emprego:/src --rm --name generate_data worker generate_data.py
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --name generate_data worker generate_data.py
 transform: # TRANSFORMS RAW DATA INTO CURATED DATA
-	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/emprego:/src --rm --name transform_data worker transform_data.py
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --name transform_data worker transform_data.py
 load: # INGESTS DATA INTO DUCKDB
-	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/emprego:/src --rm --name load_data worker load_data.py
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --name load_data worker load_data.py
 fix: # LOADS DATA FROM DUCKDB TO POSTGRES
 	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/postgres:/src/postgres --rm --name duckdb duckdb -no-stdin -init ./postgres/scripts/generate_ids.sql $(DB_PATH_ARG)
 	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/postgres:/src/postgres --rm --name duckdb duckdb -no-stdin -init ./postgres/scripts/adequate.sql $(DB_PATH_ARG)
 	@echo "${BLUE}Data fixes with DuckDB finished!${END}"
 ingest: # INGESTS DATA INTO POSTGRES
-	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/emprego:/src --rm --name ingest_data worker ingest_data.py
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --name ingest_data worker ingest_data.py
 	@echo "${BLUE}Data ingestion from DuckDB to PostGres finished!${END}"
 patch: # MODIFIES DATA IN POSTGRES DATABASE
 	docker exec $$(docker ps -f name=post -q) psql -U ${PGUSER} -d ${PGDATABASE} -f ./postgres/scripts/constraints.sql
