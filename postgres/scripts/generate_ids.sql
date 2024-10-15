@@ -5,16 +5,23 @@ CREATE OR REPLACE TABLE empresas AS (
     FROM empresas
 );
 
-CREATE OR REPLACE TABLE vagas AS (
+CREATE OR REPLACE TABLE eventos AS (
     SELECT DISTINCT
-        ROW_NUMBER() OVER() AS id_vaga,
-        * EXCLUDE(id_vaga)
-    FROM vagas
+        ROW_NUMBER() OVER() AS id_evento,
+        * EXCLUDE(id_evento)
+    FROM eventos
 );
 
-CREATE OR REPLACE TABLE candidaturas AS (
+CREATE OR REPLACE TABLE pessoas AS (
     SELECT DISTINCT
-        ROW_NUMBER() OVER() AS id_candidatura,
-        * EXCLUDE(id_candidatura)
-    FROM candidaturas
+        ROW_NUMBER() OVER() AS id_pessoa,
+        * EXCLUDE(id_pessoa)
+    FROM pessoas
+);
+
+CREATE OR REPLACE TABLE inscricaos AS (
+    SELECT DISTINCT
+        ROW_NUMBER() OVER() AS id_inscricao,
+        * EXCLUDE(id_inscricao)
+    FROM inscricaos
 );
