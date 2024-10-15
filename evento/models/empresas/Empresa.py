@@ -3,23 +3,23 @@ from . import *
 
 class Empresa(BaseModel):
     def __init__(self, **kwargs):
-        id_empresa = 1
-        nome = fake.random_element(elements=companies)
-        cnpj = fake.cnpj()
-        endereco = fake.address().replace('\n', ', ')
-        cidade = fake.city()
+        id_empresa      = 1 # Se generará com SQL usando ROW_NUMBER()
+        nome            = fake.random_element(elements=companies)
+        cnpj            = fake.cnpj()
+        endereco        = fake.address().replace('\n', ', ')
+        cidade          = fake.city()
 
-        estado = fake.estado()
+        estado          = fake.estado()
         estado_endereco = endereco.split('/')[-1].strip()
         while estado_endereco != estado[0]:
-            estado = fake.estado()
+            estado      = fake.estado()
         
-        endereco = endereco.replace(' /', ',')
-        pais = 'Brasil'
+        endereco        = endereco.replace(' /', ',')
+        pais            = 'Brasil'
 
-        telefone = fake.cellphone_number()
+        telefone        = fake.cellphone_number()
         while regex.match(pattern=r'^.\d{2} \(\d{2}\) \d{5}-\d{4}$', string=telefone) == None:
-            telefone = fake.cellphone_number()
+            telefone    = fake.cellphone_number()
 
         dominio = fake.domain_name()
         
