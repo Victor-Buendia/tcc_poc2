@@ -61,7 +61,10 @@ ingest: # INGESTS DATA INTO POSTGRES
 	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --name ingest_data worker ingest_data.py
 	@echo "${BLUE}Data ingestion from DuckDB to PostGres finished!${END}"
 patch: # MODIFIES DATA IN POSTGRES DATABASE
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --name encrypt_data worker encrypt_data.py
+	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/postgres:/src/postgres --rm --name duckdb duckdb -no-stdin -init ./postgres/scripts/pii.sql $(DB_PATH_ARG)
 	docker exec $$(docker ps -f name=post -q) psql -U ${PGUSER} -d ${PGDATABASE} -f ./postgres/scripts/constraints.sql
+	./postgres/tls/postgres_conf.sh # TLS
 	@echo "${BLUE}Data patching finished!${END}"
 
 

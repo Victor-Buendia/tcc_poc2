@@ -5,9 +5,13 @@ import datetime
 from libs import *
 
 curated_path = os.environ.get('CURATED_PATH')
+key = os.environ.get('AES_KEY_B64')
+iv_b64 = os.environ.get('AES_IV_B64')
 
 def calculate_age(birth_date):
     return (datetime.datetime.now() - datetime.datetime.strptime(birth_date, "%Y-%m-%d")).days // 365
+
+encrypt = lambda data: encrypt_data_b64(key, iv_b64, data)
 
 def transform_pessoas(dir_name: str, file_path: str, thread_id: int) -> None:
     with open(file_path, 'r') as file:
@@ -16,18 +20,19 @@ def transform_pessoas(dir_name: str, file_path: str, thread_id: int) -> None:
             {
                 'id_pessoa': record['id_pessoa'],
                 'nome': record['nome'],
+                'primeiro_nome': record['nome'].split()[0],
                 'cpf': record['cpf'],
-                # 'cpf': '*'*len(record['cpf'][:4]) + record['cpf'][4:-3] + '*'*len(record['cpf'][-3:]),
-                'data_nascimento': record['data_nascimento'],
+                'masked_cpf': '*'*len(record['cpf'][:4]) + record['cpf'][4:-3] + '*'*len(record['cpf'][-3:]),
+                # 'data_nascimento': record['data_nascimento'],
                 'idade': calculate_age(record['data_nascimento']),
                 'genero': record['genero'],
                 'telefone': record['telefone'],
-                # 'telefone': '*'*(len(record['telefone'])-4) + str(record['telefone'][-4:]),
+                'masked_telefone': '*'*(len(record['telefone'])-4) + str(record['telefone'][-4:]),
                 'email': record['email'],
-                # 'email': '*'*(len(record['email'])-4) + record['email'].split('@')[0][-4:] + '@' + record['email'].split('@')[-1],
+                'masked_email': '*'*(len(record['email'])-4) + record['email'].split('@')[0][-4:] + '@' + record['email'].split('@')[-1],
                 'senha': hash_text(record['senha']),
                 'cartao': {
-                    # 'numero': '*'*(len(record['cartao']['numero'])-4) + str(record['cartao']['numero'][-4:]),
+                    'masked_numero': '*'*(len(record['cartao']['numero'])-4) + str(record['cartao']['numero'][-4:]),
                     'numero': record['cartao']['numero'],
                     'nome': record['cartao']['nome'],
                     'bandeira': record['cartao']['bandeira'],

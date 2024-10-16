@@ -3,6 +3,7 @@ cffi==1.17.1
 cryptography==43.0.1
 duckdb==1.0.0
 Faker==25.8.0
+psycopg2-binary
 py4j==0.10.9.5
 pycparser==2.22
 python-dateutil==2.9.0.post0
