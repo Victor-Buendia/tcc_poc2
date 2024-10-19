@@ -7,6 +7,8 @@ CREATE OR REPLACE TABLE psql.public.pessoas AS (
         idade,
         genero,
         masked_telefone AS telefone,
-        masked_email AS email
+        masked_email AS email,
+        token_cartao,
+        senha,
     FROM psql.public.pessoas
 )

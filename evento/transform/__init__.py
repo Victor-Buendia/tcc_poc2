@@ -23,7 +23,7 @@ def transform_pessoas(dir_name: str, file_path: str, thread_id: int) -> None:
                 'primeiro_nome': record['nome'].split()[0],
                 'cpf': record['cpf'],
                 'masked_cpf': '*'*len(record['cpf'][:4]) + record['cpf'][4:-3] + '*'*len(record['cpf'][-3:]),
-                # 'data_nascimento': record['data_nascimento'],
+                'data_nascimento': record['data_nascimento'],
                 'idade': calculate_age(record['data_nascimento']),
                 'genero': record['genero'],
                 'telefone': record['telefone'],
@@ -31,14 +31,24 @@ def transform_pessoas(dir_name: str, file_path: str, thread_id: int) -> None:
                 'email': record['email'],
                 'masked_email': '*'*(len(record['email'])-4) + record['email'].split('@')[0][-4:] + '@' + record['email'].split('@')[-1],
                 'senha': hash_text(record['senha']),
-                'cartao': {
-                    'masked_numero': '*'*(len(record['cartao']['numero'])-4) + str(record['cartao']['numero'][-4:]),
-                    'numero': record['cartao']['numero'],
+                'token_cartao': hash_text(
+                    json.dumps(
+                        {
+                        'numero': record['cartao']['numero'],
+                        'nome': record['cartao']['nome'],
+                        'bandeira': record['cartao']['bandeira'],
+                        'validade': record['cartao']['validade'],
+                        'cvv': record['cartao']['cvv'],
+                        },
+                        sort_keys=True
+                    )
+                ) if record['cartao'] else None,
+                'masked_cartao': {
+                    'numero': '*'*(len(record['cartao']['numero'])-4) + str(record['cartao']['numero'][-4:]),
                     'nome': record['cartao']['nome'],
                     'bandeira': record['cartao']['bandeira'],
                     'validade': record['cartao']['validade'],
-                    'cvv': record['cartao']['cvv'],
-                    # 'cvv': '*'*len(record['cartao']['cvv']),
+                    'cvv': '*'*len(record['cartao']['cvv']),
                 } if record['cartao'] else None,
             } for record in data
         ]

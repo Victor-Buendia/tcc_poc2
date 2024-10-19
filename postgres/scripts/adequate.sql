@@ -1,6 +1,6 @@
 CREATE OR REPLACE TABLE pessoas AS (
     SELECT DISTINCT
-        CAST(cartao as JSON) AS cartao,
-        * EXCLUDE(cartao)
+        CAST(masked_cartao as JSON) AS cartao,
+        * EXCLUDE(masked_cartao)
     FROM pessoas
 );

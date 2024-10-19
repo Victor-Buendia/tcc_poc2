@@ -20,11 +20,14 @@ cur = conn.cursor()
 query = f"""
 CREATE TABLE pii.pessoas AS (
     SELECT
+        id_pessoa,
+        data_nascimento,
         pgp_sym_encrypt(cpf, '{encryption_key}') AS cpf,
         nome,
         pgp_sym_encrypt(email, '{encryption_key}') AS email,
         pgp_sym_encrypt(telefone, '{encryption_key}') AS telefone,
         cartao,
+        token_cartao,
         senha
     FROM public.pessoas
 );
