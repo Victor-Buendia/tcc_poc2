@@ -4,7 +4,7 @@ include docker.env
 export
 
 pipeline:
-	$(MAKE) build
+	# $(MAKE) build
 	$(MAKE) psql
 	$(MAKE) generate
 	$(MAKE) transform
@@ -12,6 +12,7 @@ pipeline:
 	$(MAKE) fix
 	$(MAKE) ingest
 	$(MAKE) patch
+	$(MAKE) restart
 
 
 
@@ -66,6 +67,8 @@ patch: # MODIFIES DATA IN POSTGRES DATABASE
 	docker exec $$(docker ps -f name=post -q) psql -U ${PGUSER} -d ${PGDATABASE} -f ./postgres/scripts/constraints.sql
 	./postgres/tls/postgres_conf.sh # TLS
 	@echo "${BLUE}Data patching finished!${END}"
+restart:
+	docker compose --env-file $(ENV_FILE) restart postgres
 
 
 
