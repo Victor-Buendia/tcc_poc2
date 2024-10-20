@@ -42,6 +42,7 @@ if __name__ == "__main__":
 
         pool = multiprocessing.Pool()
         for dir_name in batches.keys():
+            log.info(f"Transforming data for {dir_name}...")
             [
                 pool.apply(
                     func=transform_data,

@@ -27,7 +27,7 @@ def generate_data(process_id: int, model: BaseModel, record_amount: int, progres
             log.debug(f'Saving data for for {model_name} in process {process_id} at {path}...')
 
             file.write(json.dumps(data, indent = 4))
-            # log.info(f'Data successfully saved for {model_name} in process {process_id} at {path}...')
+            log.debug(f'Data successfully saved for {model_name} in process {process_id} at {path}...')
 
             progress.value += 1
             
@@ -45,6 +45,7 @@ if __name__ == '__main__':
 
         pool = multiprocessing.Pool()
         for model, records in models:
+            log.info(f"Generating data for {model.__name__}...")
             for i in range(processes):
                 pool.apply(
                     func = generate_data,

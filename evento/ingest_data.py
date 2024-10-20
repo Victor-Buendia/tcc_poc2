@@ -62,6 +62,7 @@ if __name__ == '__main__':
         
         print(batches)
         for model in batches.keys():
+            log.info(f"Ingesting data for {model}...")
             load_data_in_batches(
                 table_name = model,
                 batch_size = ingest_batch_size,
