@@ -12,7 +12,6 @@ pipeline:
 	$(MAKE) fix
 	$(MAKE) ingest
 	$(MAKE) patch
-	$(MAKE) restart
 
 
 
@@ -41,6 +40,9 @@ clean: # REMOVES ALL GENERATED FILES
 
 psql: # STARTS POSTGRES INSTANCE
 	docker compose --env-file $(ENV_FILE) up -d postgres
+	sleep 1.5
+	./postgres/tls/postgres_conf.sh # TLS
+	$(MAKE) restart
 duckdb: # STARTS DUCKDB INSTANCE AND OPENS DUCKDB CLIENT
 	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento/db:/src --rm --name duckdb duckdb $(DB_PATH_ARG)
 debug: # STARTS A DEBUG SESSION IN WORKER (PYTHON ENVIRONMENT)
@@ -65,7 +67,6 @@ patch: # MODIFIES DATA IN POSTGRES DATABASE
 	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/evento:/src --rm --name encrypt_data worker encrypt_data.py
 	docker compose --env-file $(ENV_FILE) run -v $$(pwd)/postgres:/src/postgres --rm --name duckdb duckdb -no-stdin -init ./postgres/scripts/pii.sql $(DB_PATH_ARG)
 	docker exec $$(docker ps -f name=post -q) psql -U ${PGUSER} -d ${PGDATABASE} -f ./postgres/scripts/constraints.sql
-	./postgres/tls/postgres_conf.sh # TLS
 	@echo "${BLUE}Data patching finished!${END}"
 restart:
 	docker compose --env-file $(ENV_FILE) restart postgres
