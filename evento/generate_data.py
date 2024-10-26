@@ -26,7 +26,7 @@ def generate_data(process_id: int, model: BaseModel, record_amount: int, progres
             path = raw_path.format(model_name.lower(), model_name.lower(), process_id)
             log.debug(f'Saving data for for {model_name} in process {process_id} at {path}...')
 
-            file.write(json.dumps(data, indent = 4))
+            file.write(json.dumps(data))
             log.debug(f'Data successfully saved for {model_name} in process {process_id} at {path}...')
 
             progress.value += 1

@@ -53,14 +53,14 @@ def transform_pessoas(dir_name: str, file_path: str, thread_id: int) -> None:
             } for record in data
         ]
     with open(curated_path.format(dir_name, dir_name, thread_id), 'w') as file:
-        file.write(json.dumps(transformed_data, indent=4))
+        file.write(json.dumps(transformed_data))
         
 def no_transform(dir_name: str, file_path: str, thread_id: int) -> None:
     with open(file_path, 'r') as file:
         data = json.load(file)
         transformed_data = [record for record in data]
     with open(curated_path.format(dir_name, dir_name[:-1], thread_id), 'w') as file:
-        file.write(json.dumps(transformed_data, indent=4))
+        file.write(json.dumps(transformed_data))
 
 transformation_mapping = {
     'empresas': no_transform,
