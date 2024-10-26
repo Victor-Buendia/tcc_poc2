@@ -1,4 +1,4 @@
-# Trabalho de Conclusão de Curso: PoC 1
+# Trabalho de Conclusão de Curso: PoC 2
 
 Este repositório é fruto de um TCC com o foco de pesquisa sendo **"Um Estudo Exploratório Sobre Privacidade de Dados na Quarta Revolução Industrial"**.
 
@@ -10,7 +10,7 @@ O projeto precisa do Docker versão 26.1.4 ou superior e Docker Compose 2.27.0 o
 
 Todos os códigos podem ser consultados no [Makefile](https://github.com/Victor-Buendia/tcc_poc2/blob/main/Makefile) do projeto, sendo o próprio código a documentação de seu uso. Para executar o pipeline completo, altere os valores de volume em [`docker.env`](https://github.com/Victor-Buendia/tcc_poc2/blob/main/docker.env) e execute `make pipeline`.
 
-As transformações da PoC 1 estão localizadas no arquivo [transform/__init__.py](https://github.com/Victor-Buendia/tcc_poc2/blob/main/emprego/transform/__init__.py).
+As transformações da PoC 2 estão localizadas no arquivo [transform/__init__.py](https://github.com/Victor-Buendia/tcc_poc2/blob/main/evento/transform/__init__.py).
 
 ---
 # Licença de Uso
